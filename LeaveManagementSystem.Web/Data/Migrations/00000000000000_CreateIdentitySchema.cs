@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace LeaveManagementSystem.Web.Data.Migrations
@@ -11,9 +12,10 @@ namespace LeaveManagementSystem.Web.Data.Migrations
                 name: "AspNetRoles",
                 columns: table => new
                 {
-                    Id = table.Column<string>(nullable: false),
-                    Name = table.Column<string>(maxLength: 256, nullable: true),
-                    NormalizedName = table.Column<string>(maxLength: 256, nullable: true),
+                    Id = table.Column<string>(type: "NVARCHAR(450)",
+                        nullable: false), // ใช้ NVARCHAR(450) เพื่อให้เข้ากับ SQL Server
+                    Name = table.Column<string>( maxLength: 256, nullable: true),
+                    NormalizedName = table.Column<string>(type: "NVARCHAR(450)", maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(nullable: true)
                 },
                 constraints: table => { table.PrimaryKey("PK_AspNetRoles", x => x.Id); });
@@ -22,11 +24,11 @@ namespace LeaveManagementSystem.Web.Data.Migrations
                 name: "AspNetUsers",
                 columns: table => new
                 {
-                    Id = table.Column<string>(nullable: false),
+                    Id = table.Column<string>(type: "NVARCHAR(450)", nullable: false), // แก้ไข Id ให้เป็น NVARCHAR
                     UserName = table.Column<string>(maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
-                    Email = table.Column<string>(maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "NVARCHAR(450)",maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "NVARCHAR(450)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "NVARCHAR(450)",maxLength: 256, nullable: true),
                     EmailConfirmed = table.Column<bool>(nullable: false),
                     PasswordHash = table.Column<string>(nullable: true),
                     SecurityStamp = table.Column<string>(nullable: true),
@@ -45,8 +47,10 @@ namespace LeaveManagementSystem.Web.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    RoleId = table.Column<string>(nullable: false),
+                        .Annotation("SqlServer:Identity",
+                            "1, 1"), // ใช้ Identity เพื่อ Auto Increment สำหรับ SQL Server
+                    RoleId = table.Column<string>(type: "NVARCHAR(450)",
+                        nullable: false), // NVARCHAR ต้องตรงกับ AspNetRoles.Id
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)
                 },
@@ -66,8 +70,9 @@ namespace LeaveManagementSystem.Web.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    UserId = table.Column<string>(nullable: false),
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "NVARCHAR(450)",
+                        nullable: false), // NVARCHAR ต้องตรงกับ AspNetUsers.Id
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)
                 },
@@ -86,10 +91,10 @@ namespace LeaveManagementSystem.Web.Data.Migrations
                 name: "AspNetUserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(maxLength: 128, nullable: false),
-                    ProviderKey = table.Column<string>(maxLength: 128, nullable: false),
+                    LoginProvider = table.Column<string>(type: "NVARCHAR(450)", nullable: false),
+                    ProviderKey = table.Column<string>(type: "NVARCHAR(450)", nullable: false),
                     ProviderDisplayName = table.Column<string>(nullable: true),
-                    UserId = table.Column<string>(nullable: false)
+                    UserId = table.Column<string>(type: "NVARCHAR(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -106,8 +111,8 @@ namespace LeaveManagementSystem.Web.Data.Migrations
                 name: "AspNetUserRoles",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(nullable: false),
-                    RoleId = table.Column<string>(nullable: false)
+                    UserId = table.Column<string>(type: "NVARCHAR(450)", nullable: false),
+                    RoleId = table.Column<string>(type: "NVARCHAR(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -130,9 +135,9 @@ namespace LeaveManagementSystem.Web.Data.Migrations
                 name: "AspNetUserTokens",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(nullable: false),
-                    LoginProvider = table.Column<string>(maxLength: 128, nullable: false),
-                    Name = table.Column<string>(maxLength: 128, nullable: false),
+                    UserId = table.Column<string>(type: "NVARCHAR(450)", nullable: false),
+                    LoginProvider = table.Column<string>(type: "NVARCHAR(450)", nullable: false),
+                    Name = table.Column<string>(type: "NVARCHAR(450)", nullable: false),
                     Value = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -186,26 +191,13 @@ namespace LeaveManagementSystem.Web.Data.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "AspNetRoleClaims");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUserClaims");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUserLogins");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUserRoles");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUserTokens");
-
-            migrationBuilder.DropTable(
-                name: "AspNetRoles");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
+            migrationBuilder.DropTable(name: "AspNetRoleClaims");
+            migrationBuilder.DropTable(name: "AspNetUserClaims");
+            migrationBuilder.DropTable(name: "AspNetUserLogins");
+            migrationBuilder.DropTable(name: "AspNetUserRoles");
+            migrationBuilder.DropTable(name: "AspNetUserTokens");
+            migrationBuilder.DropTable(name: "AspNetRoles");
+            migrationBuilder.DropTable(name: "AspNetUsers");
         }
     }
 }
